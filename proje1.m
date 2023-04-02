@@ -81,3 +81,7 @@ if Cbuck >= Cboost
 else
     C = Cboost;
 end
+
+% MOSFET Çalışma Gerilimi Hesaplama
+safety_margin = 1.5; % Güvenlik marjı olarak %50 kullanıyoruz
+Vds_min = max(Vinmax, Vomax) * safety_margin; % Çalışma geriliminin minimum değeri
