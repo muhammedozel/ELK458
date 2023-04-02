@@ -96,3 +96,23 @@ else
 end
 
 Id_min = Iswmax * safety_margin_current; % Akım kapasitesinin minimum değeri
+
+% MOSFET Özellikleri (Örnek değerler, gerçek değerler için üretici veri sayfasını kontrol edin)
+Rds_on = 0.01; % On-state direnç (ohm)
+Cgs = 1e-9; % Gate-source kapasite (farad)
+tr = 10e-9; % Rise time (saniye)
+tf = 10e-9; % Fall time (saniye)
+
+% Anahtarlama ve İletkenlik Kayıpları Hesaplama
+P_switching = 0.5 * (Vin^2) * (Io^2) * (tr + tf) * fsw * Rds_on / (Rds_on * Cgs);
+
+if Vin > Vo
+    D = Dbuck;
+else
+    D = Dboost;
+end
+
+P_conduction = Rds_on * (Iswmax^2) * D;
+
+% Toplam Anahtar Kayıpları
+P_total = P_switching + P_conduction;
