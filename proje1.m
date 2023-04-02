@@ -8,21 +8,33 @@
 % 8. Anahtar akımının maksimum değeri (Iswmaxbuck ve Iswmaxboost) hesaplanır.
 % 9. Çıkış gerilimi dalgalanması (Voutripple) ve kapasitans değerleri (Cbuck ve Cboost) hesaplanır.
 % 10. Son olarak, en uygun endüktans (L) ve kapasitans (C) değerleri seçilir.
+% Giriş ve çıkış değerleri
 Po = 250;
 Vinmin = 2.5;
 Vinmax = 60;
 Vomin = 20;
 Vomax = 24;
+
+% Verim ve anahtarlama frekansı
 n = 0.95;
 fsw = 300000;
+
+% Çıkış akımı ve yük direnci hesaplamaları
 Io = Po / Vo;
 R = Po / Io;
+
+% Rastgele giriş ve çıkış gerilimi değerleri
 Vin = round(Vinmin + (Vinmax - Vinmin) * rand(1, 1));
 Vo = round(Vomin + (Vomax - Vomin) * rand(1, 1));
+
+% Anahtarlama periyodu
 T = 1 / fsw;
+
+% Buck ve Boost dönüşüm oranları
 Dbuck = Vomax / (Vinmax * n);
 Dboost = 1 - (Vinmin * n) / Vomax;
 
+% Gerilim düşüş oranları ve süreleri
 if Vin > Vo
     D1 = Dbuck * 99.99;
     D2 = (1 - Dbuck) * 99.99;
@@ -39,17 +51,25 @@ else
     D3_d = T * Dboost;
 end
 
+% Endüktans değerleri ve akım dalgalanması
 Kind = 0.3;
 Lbuck = Vo * (Vinmax - Vo) / (Kind * fsw * Vinmax * Io);
 Lboost = Vinmin ^ 2 * (Vo - Vinmin) / (fsw * Kind * Io * Vo ^ 2);
+
+% Akım dalgalanması için maksimum değerler
 dImaxbuck = (Vinmin - Vo) * Dbuck / (fsw * Lbuck);
 Iswmaxbuck = dImaxbuck / 2 + Io;
 dImaxboost = Vinmin * Dboost / (fsw * Lboost);
+
+% Anahtar akımının maksimum değeri
 Iswmaxboost = dImaxboost / 2 + Io / (1 - Dboost);
+
+% Çıkış gerilimi dalgalanması ve kapasitans değerleri
 Voutripple = Vo * 0.005;
 Cbuck = Kind * Io / (8 * fsw * Voutripple);
 Cboost = Io * Dboost / (fsw * Voutripple);
 
+% En uygun endüktans ve kapasitans değerlerinin seçimi
 if Lbuck >= Lboost
     L = Lbuck;
 else
