@@ -85,3 +85,14 @@ end
 % MOSFET Çalışma Gerilimi Hesaplama
 safety_margin = 1.5; % Güvenlik marjı olarak %50 kullanıyoruz
 Vds_min = max(Vinmax, Vomax) * safety_margin; % Çalışma geriliminin minimum değeri
+
+% MOSFET Akım Kapasitesi Hesaplama
+safety_margin_current = 1.5; % Güvenlik marjı olarak %50 kullanıyoruz
+
+if Lbuck >= Lboost
+    Iswmax = Iswmaxbuck;
+else
+    Iswmax = Iswmaxboost;
+end
+
+Id_min = Iswmax * safety_margin_current; % Akım kapasitesinin minimum değeri
