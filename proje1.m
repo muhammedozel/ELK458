@@ -1,3 +1,4 @@
+% Giriş değerleri
 Po=250;
 Vinmin=3;
 Vinmax=60;
@@ -6,13 +7,20 @@ Vomax=24;
 n=0.95;
 fsw=300000;
 
+% Rastgele giriş ve çıkış gerilimlerini hesapla
 Vin=round(Vinmin+(Vinmax-Vinmin)*rand(1,1));
 Vo=round(Vomin+(Vomax-Vomin)*rand(1,1));
+
+% Çıkış akımı (Io), direnç (R) ve anahtarlama periyodu (T) hesaplamaları
 Io=Po/Vo;
 R=Po/Io;
 T=1/fsw;
+
+% Giriş ve çıkış gerilimlerine göre buck ve boost görev döngülerini belirle
 Dbuck=Vomax/(Vinmax*n);
 Dboost=1-(Vinmin*n)/Vomax;
+
+% Giriş ve çıkış gerilimlerine göre D1, D2, D3 ve D4 hesaplamaları
 if Vin>Vo
     D1=Dbuck*99.99;
     D2=(1-Dbuck)*99.99;
@@ -29,17 +37,27 @@ else
     D3_d=T*Dboost;
 end
 
+% Endüktans ve kapasitans hesaplamaları için sabit
 Kind=0.3;
+
+% Buck ve boost modları için endüktans değerlerini hesapla (Lbuck, Lboost)
 Lbuck=Vo*(Vinmax-Vo)/(Kind*fsw*Vinmax*Io); 
-Lboost=Vinmin^2*(Vo-Vinmin)/(fsw*Kind*Io*Vo^2); 
+Lboost=Vinmin^2*(Vo-Vinmin)/(fsw*Kind*Io*Vo^2);
+
+% Buck ve boost modları için akım çırpıntısı hesaplamaları
 dImaxbuck=(Vinmin-Vo)*Dbuck/(fsw*Lbuck);
 Iswmaxbuck=dImaxbuck/2+Io;
 dImaxboost=Vinmin*Dboost/(fsw*Lboost);
 Iswmaxboost=dImaxboost/2+Io/(1-Dboost);
+
+% Çıkış gerilimi çırpıntısı
 Voutripple=Vo*0.005;
+
+% Buck ve boost modları için kapasitans değerlerini hesapla (Cbuck, Cboost)
 Cbuck=Kind*Io/(8*fsw*Voutripple);
 Cboost=Io*Dboost/(fsw*Voutripple);
 
+% Buck ve boost modlarından daha büyük endüktans (L) ve kapasitans (C) değerlerini seç
 if Lbuck>=Lboost
     L=Lbuck;
 else
@@ -52,7 +70,7 @@ else
     C=Cboost;
 end
 
-
+% Buck ve boost modları için minimum endüktans değerlerini hesapla
 Lboostmin=Vinmin^2*(Vomin-Vinmin)/(fsw*Kind*Io*Vo^2);
 deltaIlboost=Vinmin*Dboost/(fsw*Lboostmin);
 Ilmaxboost=deltaIlboost/2+Io/(1-Dboost);
@@ -62,8 +80,13 @@ deltaIlbuck=(Vinmin-Vo)/(fsw*Lbuckmin);
 Ilmaxbuck=deltaIlbuck/2+Io;
 Ilminbuck=-deltaIlbuck/2+Io;
 
+% Zirve akım değerini hesapla
 Ipeak=Io+deltaIlbuck/2;
+
+% Maksimum manyetik akı yoğunluğunu hesapla
 Bmax=0.25;
+
+% Diğer sabitler
 ku=0.8;
 Ki=1;
 Kt=48.2*10^3;
@@ -81,6 +104,7 @@ alfa=1.25;
 beta=2.35;
 Kc=16.9;
 
+% Manyetik bileşenler için hesaplamalar
 dIL=(Vinmax-Vomin)*Dbuck*T/L1;
 L1=Vomin*(Vinmax-Vomin)/(Kind*fsw*Vinmax*(Po/Vomin));
 I=Po/Vomin+dIL/2;
@@ -95,6 +119,7 @@ N=sqrt(L1/Al);
 dB=((Vinmax-Vomin)*Dbuck*T)/(N*Ac);
 Pfe=Vc*Kc*fsw^alfa*(dB/2)^beta;
 
+% Manyetik bileşenler için boyut ve tel özelliklerini hesapla
 gmax=(lc/muopt)*10^3;
 Ap2=2.49;
 Jo=Kt*(sqrt(dT))/(sqrt(ku*(1+gamma))*(Ap2*10^-8)^(1/8))*10^-4;
@@ -104,5 +129,7 @@ N1=9;
 Rdcwire=10.75*10^-6;
 alpha20=0.00393;
 Tmax=85;
+
+% Tel direnci ve bakır kayıplarını hesapla
 Rdc=N1*MLT*10^2*Rdcwire*(1+alpha20*(Tmax-20))*10^3;
 Pcu=Rdc*10^-3*Iomax^2;
