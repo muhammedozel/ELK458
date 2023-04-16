@@ -133,3 +133,74 @@ Tmax=85;
 % Tel direnci ve bakır kayıplarını hesapla
 Rdc=N1*MLT*10^2*Rdcwire*(1+alpha20*(Tmax-20))*10^3;
 Pcu=Rdc*10^-3*Iomax^2;
+
+% İndüktör değerleri matrisi (Çekirdek numarası, Çekirdek Tipi, B, Kc, Geçirgenlik, Al, Wa, Ac, Lc, Vc)
+inductor = {
+    '00K2510E090', 'Kool Mu', 0.1, 16.9, 90, 100, 77.8, 38.5, 48.5, 1870;
+    '00K1808E090', 'Kool Mu', 0.1, 16.9, 90, 69, 51.5, 22.80, 40.1, 914;
+    '00K3007E090', 'Kool Mu', 0.1, 16.9, 90, 92, 121, 60.1, 65.6, 3940;
+    '00K4317E090', 'Kool Mu', 0.1, 16.9, 90, 234, 164, 152, 77.5, 11800;
+    '00X3515E060', 'X Flux', 0.1, 16.9, 60, 102, 151, 84, 69.4, 5830;
+    '00X4317E060', 'X Flux', 0.1, 16.9, 60, 163, 164, 152, 77.5, 11800;
+    '00X4020E060', 'X Flux', 0.1, 16.9, 60, 150, 276, 183, 98.4, 18000;
+    '00X1808E060', 'X Flux', 0.1, 16.9, 60, 48, 51.5, 22.8, 40.1, 914
+};
+
+% İndüktör seçim fonksiyonu
+function result = inductor_selection(inductor, A, B, C)
+    % İndüktör değerlerini al
+    core_number = inductor{1};
+    core_type = inductor{2};
+    B = inductor{3};
+    Kc = inductor{4};
+    permability = inductor{5};
+    Al = inductor{6};
+    Wa = inductor{7};
+    Ac = inductor{8};
+    Lc = inductor{9};
+    Vc = inductor{10};
+
+
+    
+% Diode forward voltage (Vf) ve on-state resistance (Rdson) değerlerini tanımla
+Vf = 0.45;
+Rdson = 0.003;
+
+% İdeal diyot ve anahtar gerilim düşüşü değerlerini hesapla
+Vd = Vf;
+Vsw = Vin * Rdson;
+
+% Çıkış gücü kayıplarını hesapla
+Pout = Po * (1 - n);
+
+% Buck ve boost modları için diyot ve anahtar kayıplarını hesapla
+Pd_boost = Vin * Io * Dboost * Vd;
+Psw_boost = Vin * Io * (1 - Dboost) * Vsw;
+Pd_buck = Vo * Io * (1 - Dbuck) * Vd;
+Psw_buck = Vin * Io * Dbuck * Vsw;
+
+% Toplam kayıpları hesapla
+if Vin > Vo
+    Ploss = Pd_buck + Psw_buck;
+else
+    Ploss = Pd_boost + Psw_boost;
+end
+
+% İç verimliliği hesapla
+eta = Pout / (Pout + Ploss);
+
+% Çıkış gerilimini ve akımını yazdır
+fprintf('Giriş Gerilimi (Vin): %.2f V\n', Vin);
+fprintf('Çıkış Gerilimi (Vo): %.2f V\n', Vo);
+fprintf('Çıkış Akımı (Io): %.2f A\n', Io);
+
+% Endüktans ve kapasitans değerlerini yazdır
+fprintf('Endüktans (L): %.2e H\n', L);
+fprintf('Kapasitans (C): %.2e F\n', C);
+
+% Zirve akım ve kayıpları yazdır
+fprintf('Zirve Akım (Ipeak): %.2f A\n', Ipeak);
+fprintf('Toplam Kayıp (Ploss): %.2f W\n', Ploss);
+
+% İç verimliliği yazdır
+fprintf('İç Verimlilik (eta): %.2f%%\n', eta * 100);
