@@ -138,72 +138,39 @@ Icout = Iomax * sqrt((Vomax / Vinmin) - 1);
 ESR = 0.025;
 Pcout = Icout ^ 2 * ESR;
 
+% Eklenen MOSFET değerleri
+mosfets = {
+           'A750MW187M1J(1E020', 60, 0.020, 4.70;
+           'UCZ1J181M1MS',       60, 0.200, 9.00;
+           'EKY-630ELL681MK40S', 60, 0.021, 1.81;
+           'EKY-630ELL471ML20S', 60, 0.025, 1.73
+           };
 
-% İndüktör değerleri matrisi (Çekirdek numarası, Çekirdek Tipi, B, Kc, Geçirgenlik, Al, Wa, Ac, Lc, Vc)
-inductor = {
-            '00K2510E090', 'Kool Mu', 0.1, 16.9, 90, 100, 77.8, 38.5,  48.5, 1870;
-            '00K1808E090', 'Kool Mu', 0.1, 16.9, 90, 69,  51.5, 22.80, 40.1, 914;
-            '00K3007E090', 'Kool Mu', 0.1, 16.9, 90, 92,  121,  60.1,  65.6, 3940;
-            '00K4317E090', 'Kool Mu', 0.1, 16.9, 90, 234, 164,  152,   77.5, 11800;
-            '00X3515E060', 'X Flux',  0.1, 16.9, 60, 102, 151,  84,    69.4, 5830;
-            '00X4317E060', 'X Flux',  0.1, 16.9, 60, 163, 164,  152,   77.5, 11800;
-            '00X4020E060', 'X Flux',  0.1, 16.9, 60, 150, 276,  183,   98.4, 18000;
-            '00X1808E060', 'X Flux',  0.1, 16.9, 60, 48,  51.5, 22.8,  40.1, 914
-            };
+% En etkili MOSFET seçim algoritması
+function [best_mosfet, best_score] = select_best_mosfet(mosfets, loss_weight, cost_weight)
+    best_mosfet = mosfets(1, :);
+    best_score = Inf;
 
-% İndüktör seçim fonksiyonu
-function result = inductor_selection(inductor, A, B, C)
-    % İndüktör değerlerini al
-    core_number = inductor{1};
-    core_type = inductor{2};
-    B = inductor{3};
-    Kc = inductor{4};
-    permability = inductor{5};
-    Al = inductor{6};
-    Wa = inductor{7};
-    Ac = inductor{8};
-    Lc = inductor{9};
-    Vc = inductor{10};
+    for i = 1:size(mosfets, 1)
+        mosfet = mosfets(i, :);
+        esr = mosfet{3};
+        cost = mosfet{4};
+        score = loss_weight * esr + cost_weight * cost;
 
-    % Diode forward voltage (Vf) ve on-state resistance (Rdson) değerlerini tanımla
-    Vf = 0.45;
-    Rdson = 0.003;
-
-    % İdeal diyot ve anahtar gerilim düşüşü değerlerini hesapla
-    Vd = Vf;
-    Vsw = Vin * Rdson;
-
-    % Çıkış gücü kayıplarını hesapla
-    Pout = Po * (1 - n);
-
-    % Buck ve boost modları için diyot ve anahtar kayıplarını hesapla
-    Pd_boost = Vin * Io * Dboost * Vd;
-    Psw_boost = Vin * Io * (1 - Dboost) * Vsw;
-    Pd_buck = Vo * Io * (1 - Dbuck) * Vd;
-    Psw_buck = Vin * Io * Dbuck * Vsw;
-
-    % Toplam kayıpları hesapla
-    if Vin > Vo
-        Ploss = Pd_buck + Psw_buck;
-    else
-        Ploss = Pd_boost + Psw_boost;
+        if score < best_score
+            best_mosfet = mosfet;
+            best_score = score;
+        end
     end
+end
 
-    % İç verimliliği hesapla
-    eta = Pout / (Pout + Ploss);
+% En etkili MOSFET'i seç
+loss_weight = 0.7;
+cost_weight = 0.3;
+[best_mosfet, best_score] = select_best_mosfet(mosfets, loss_weight, cost_weight);
 
-    % Çıkış gerilimini ve akımını yazdır
-    fprintf('Giriş Gerilimi (Vin): %.2f V\n', Vin);
-    fprintf('Çıkış Gerilimi (Vo): %.2f V\n', Vo);
-    fprintf('Çıkış Akımı (Io): %.2f A\n', Io);
-
-    % Endüktans ve kapasitans değerlerini yazdır
-    fprintf('Endüktans (L): %.2e H\n', L);
-    fprintf('Kapasitans (C): %.2e F\n', C);
-
-    % Zirve akım ve kayıpları yazdır
-    fprintf('Zirve Akım (Ipeak): %.2f A\n', Ipeak);
-    fprintf('Toplam Kayıp (Ploss): %.2f W\n', Ploss);
-
-    % İç verimliliği yazdır
-    fprintf('İç Verimlilik (eta): %.2f%%\n', eta * 100);
+% En etkili MOSFET'i yazdır
+fprintf('En Etkili MOSFET: %s\n', best_mosfet{1});
+fprintf('Gerilim (V): %.2f V\n', best_mosfet{2});
+fprintf('ESR: %.2f\n', best_mosfet{3});
+fprintf('Maliyet: %.2f\n', best_mosfet{4});
