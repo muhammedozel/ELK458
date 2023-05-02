@@ -138,39 +138,39 @@ Icout = Iomax * sqrt((Vomax / Vinmin) - 1);
 ESR = 0.025;
 Pcout = Icout ^ 2 * ESR;
 
-% Eklenen MOSFET değerleri
-mosfets = {
+% Eklenen INDUCTANCE değerleri
+inductances = {
            'A750MW187M1J(1E020', 60, 0.020, 4.70;
            'UCZ1J181M1MS',       60, 0.200, 9.00;
            'EKY-630ELL681MK40S', 60, 0.021, 1.81;
            'EKY-630ELL471ML20S', 60, 0.025, 1.73
            };
 
-% En etkili MOSFET seçim algoritması
-function [best_mosfet, best_score] = select_best_mosfet(mosfets, loss_weight, cost_weight)
-    best_mosfet = mosfets(1, :);
+% En etkili INDUCTANCE seçim algoritması
+function [best_inductance, best_score] = select_best_inductance(inductances, loss_weight, cost_weight)
+    best_inductance = inductances(1, :);
     best_score = Inf;
 
-    for i = 1:size(mosfets, 1)
-        mosfet = mosfets(i, :);
-        esr = mosfet{3};
-        cost = mosfet{4};
+    for i = 1:size(inductances, 1)
+        inductance = inductances(i, :);
+        esr = inductance{3};
+        cost = inductance{4};
         score = loss_weight * esr + cost_weight * cost;
 
         if score < best_score
-            best_mosfet = mosfet;
+            best_inductance = inductance;
             best_score = score;
         end
     end
 end
 
-% En etkili MOSFET'i seç
+% En etkili INDUCTANCE'i seç
 loss_weight = 0.7;
 cost_weight = 0.3;
-[best_mosfet, best_score] = select_best_mosfet(mosfets, loss_weight, cost_weight);
+[best_inductance, best_score] = select_best_inductance(inductances, loss_weight, cost_weight);
 
-% En etkili MOSFET'i yazdır
-fprintf('En Etkili MOSFET: %s\n', best_mosfet{1});
-fprintf('Gerilim (V): %.2f V\n', best_mosfet{2});
-fprintf('ESR: %.2f\n', best_mosfet{3});
-fprintf('Maliyet: %.2f\n', best_mosfet{4});
+% En etkili INDUCTANCE'i yazdır
+fprintf('En Etkili INDUCTANCE: %s\n', best_inductance{1});
+fprintf('Gerilim (V): %.2f V\n', best_inductance{2});
+fprintf('ESR: %.2f\n', best_inductance{3});
+fprintf('Maliyet: %.2f\n', best_inductance{4});
