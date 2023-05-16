@@ -161,10 +161,6 @@ inductances = {
                       
            };
 
-% En etkili INDUCTANCE'i seç
-loss_weight = 0.7;
-cost_weight = 0.3;
-[best_inductance, best_score] = select_best_inductance(inductances, loss_weight, cost_weight);
 
 % En etkili INDUCTANCE'i yazdır
 fprintf('En Etkili INDUCTANCE: %s\n', best_inductance{1});
