@@ -182,7 +182,7 @@ function [best_inductance, best_score] = select_best_inductance(inductances, los
         esr = inductance{3};
         volume = inductance{4};
         cost = inductance{5};
-        score = loss_weight * esr + cost_weight * cost volume_weight * volume; 
+        score = loss_weight * esr + cost_weight * cost + volume_weight + volume; 
 
         if score < best_score
             best_inductance = inductance;
