@@ -162,12 +162,6 @@ inductances = {
            };
 
 
-% En etkili INDUCTANCE'i yazdır
-fprintf('En Etkili INDUCTANCE: %s\n', best_inductance{1});
-fprintf('Gerilim (V): %.2f V\n', best_inductance{2});
-fprintf('ESR: %.2f\n', best_inductance{3});
-fprintf('Maliyet: %.2f\n', best_inductance{4});
-
 % En etkili INDUCTANCE seçim algoritması
 function [best_inductance, best_score] = select_best_inductance(inductances, loss_weight, cost_weight, volume_weight)
     best_inductance = inductances(1, :);
@@ -187,11 +181,7 @@ function [best_inductance, best_score] = select_best_inductance(inductances, los
     end
 end
 
-% En etkili INDUCTANCE'i seç
-loss_weight = 0.6;
-cost_weight = 0.3;
-volume_weight = 0.1;
-[best_inductance, best_score] = select_best_inductance(inductances, loss_weight, cost_weight, volume_weight);
+
 
 % En etkili INDUCTANCE'i yazdır
 fprintf('En Etkili INDUCTANCE: %s\n', best_inductance{1});
