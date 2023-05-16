@@ -175,7 +175,7 @@ fprintf('Hacim: %.2f\n', best_capacitor{4});
 fprintf('Maliyet: %.2f\n', best_capacitor{5});
 
 % En etkili CAPACITOR seçim algoritması
-function [best_capacitor, best_score] = select_best_capacitor(capacitors, loss_weight, cost_weight, volume_weight)
+function [best_capacitor, best_score] = select_best_capacitor(capacitors, loss_weight, cost_weight, volume_weight, Icout, fsw)
     best_capacitor = capacitors(1, :);
     best_score = Inf;
 
@@ -185,11 +185,11 @@ function [best_capacitor, best_score] = select_best_capacitor(capacitors, loss_w
         DF = capacitor{3};
         volume = capacitor{4};
         cost = capacitor{5};
-
-        score = loss_weight * Pcout + cost_weight * cost + volume_weight * volume;
         
         ESR1 = DF/(2*fsw*C*3.14);
         Pcout = Icout ^ 2 * ESR1;
+
+        score = loss_weight * Pcout + cost_weight * cost + volume_weight * volume;
 
         if score < best_score
             best_capacitor = capacitor;
