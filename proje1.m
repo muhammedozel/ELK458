@@ -138,8 +138,8 @@ Icout = Iomax * sqrt((Vomax / Vinmin) - 1);
 ESR = 0.025;
 Pcout = Icout ^ 2 * ESR;
 
-% Eklenen INDUCTANCE değerleri
-inductances = {
+% Eklenen CAPACITOR değerleri
+capacitors = {
             'EEU-FS1J181',       180, 0.045, 1256.637061, 2530;
             'EEUFR1J181B',       180, 0.035, 1570.79633,  2325;
             'EEU-FC1J181SB',     180, 0.150, 1840.77695,  2880;
@@ -160,33 +160,33 @@ inductances = {
             '860040775009',      180, 0.100, 1570.79633,  2225; 
            };
 
-% En etkili INDUCTANCE'i seç
+% En etkili CAPACITOR'i seç
 loss_weight   = 0.55;
 cost_weight   = 0.30;
 volume_weight = 0.15;
-[best_inductance, best_score] = select_best_inductance(inductances, loss_weight, cost_weight, volume_weight);
+[best_capacitor, best_score] = select_best_capacitor(capacitors, loss_weight, cost_weight, volume_weight);
 
-% En etkili INDUCTANCE'i yazdır
-fprintf('En Etkili INDUCTANCE: %s\n', best_inductance{1});
-fprintf('Gerilim (V): %.2f V\n', best_inductance{2});
-fprintf('ESR: %.2f\n', best_inductance{3});
-fprintf('Hacim: %.2f\n', best_inductance{4});
-fprintf('Maliyet: %.2f\n', best_inductance{5});
+% En etkili CAPACITOR'i yazdır
+fprintf('En Etkili CAPACITOR: %s\n', best_capacitor{1});
+fprintf('Gerilim (V): %.2f V\n', best_capacitor{2});
+fprintf('ESR: %.2f\n', best_capacitor{3});
+fprintf('Hacim: %.2f\n', best_capacitor{4});
+fprintf('Maliyet: %.2f\n', best_capacitor{5});
 
-% En etkili INDUCTANCE seçim algoritması
-function [best_inductance, best_score] = select_best_inductance(inductances, loss_weight, cost_weight, volume_weight)
-    best_inductance = inductances(1, :);
+% En etkili CAPACITOR seçim algoritması
+function [best_capacitor, best_score] = select_best_capacitor(capacitors, loss_weight, cost_weight, volume_weight)
+    best_capacitor = capacitors(1, :);
     best_score = Inf;
 
-    for i = 1:size(inductances, 1)
-        inductance = inductances(i, :);
-        esr = inductance{3};
-        volume = inductance{4};
-        cost = inductance{5};
+    for i = 1:size(capacitors, 1)
+        capacitor = capacitors(i, :);
+        esr = capacitor{3};
+        volume = capacitor{4};
+        cost = capacitor{5};
         score = loss_weight * esr + cost_weight * cost + volume_weight * volume;
 
         if score < best_score
-            best_inductance = inductance;
+            best_capacitor = capacitor;
             best_score = score;
         end
     end
