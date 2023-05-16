@@ -169,8 +169,8 @@ volume_weight = 0.15;
 
 % En etkili CAPACITOR'i yazdır
 fprintf('En Etkili CAPACITOR: %s\n', best_capacitor{1});
-fprintf('Gerilim (V): %.2f V\n', best_capacitor{2});
-fprintf('ESR: %.2f\n', best_capacitor{3});
+fprintf('Kapasite (F): %.2f V\n', '180');
+fprintf('Pcout: %.2f\n', best_capacitor{3});
 fprintf('Hacim: %.2f\n', best_capacitor{4});
 fprintf('Maliyet: %.2f\n', best_capacitor{5});
 
