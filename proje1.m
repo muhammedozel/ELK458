@@ -140,27 +140,38 @@ Pcout = Icout ^ 2 * ESR;
 
 % Eklenen INDUCTANCE değerleri
 inductances = {
-           'EEU-FS1J181',       180, 0.045, 1256.637061, 2530,000;
-           'EEUFR1J181B',       180, 0.035, 1570.79633,  2325;
-           'EEU-FC1J181SB',     180, 0.150, 1840.77695,  2880;
-           '860080775017',      180, 0.095, 1570.79633,  1865;
-           'EEU-FC1J181S',      180, 0.150, 1840.77695,  3625;
-           'EEU-FS1J181L',      180, 0.050, 1005.30965,  2110;
-           'EEU-FR1J181',       180, 0.035, 1570.79633,  3070;
-           '63ZLH180MEFC10X16', 180, 0.110, 1256.63706,  1365;
-           'EKZN800ELL181MK16S',180, 0.090, 1963.49541,  2180,00;
-           'UPW1J181MPD',       180, 0.147, 1570.79633,  2840;
-           'UHE1J181MPD1TD',    180, 0.210, 1570.79633,  1960;
-           'EKZE630ELL181MK16S',180, 0.072, 1963.49541,  2370;
-           'EKZN800ELL181MK16S',180, 0.090, 1963.49541,  2180;
-           '187AVG063MGBJ',     180, 0.028, 942.47780,   2900;
-           'UCZ1J181MNS1MS',    180, 0.020, 1656.69925,  3925;
-           'UHW1J181MPD1TD',    180, 0.115, 1256.63706,  2005;
-           '63ZLJ180M10X16',    180, 0.076, 1256.63706,  1785;
-           '860040775009',      180, 0.100, 1570.79633,  2225;                           
-                      
+            'EEU-FS1J181',       180, 0.045, 1256.637061, 2530;
+            'EEUFR1J181B',       180, 0.035, 1570.79633,  2325;
+            'EEU-FC1J181SB',     180, 0.150, 1840.77695,  2880;
+            '860080775017',      180, 0.095, 1570.79633,  1865;
+            'EEU-FC1J181S',      180, 0.150, 1840.77695,  3625;
+            'EEU-FS1J181L',      180, 0.050, 1005.30965,  2110;
+            'EEU-FR1J181',       180, 0.035, 1570.79633,  3070;
+            '63ZLH180MEFC10X16', 180, 0.110, 1256.63706,  1365;
+            'EKZN800ELL181MK16S',180, 0.090, 1963.49541,  2180;
+            'UPW1J181MPD',       180, 0.147, 1570.79633,  2840;
+            'UHE1J181MPD1TD',    180, 0.210, 1570.79633,  1960;
+            'EKZE630ELL181MK16S',180, 0.072, 1963.49541,  2370;
+            'EKZN800ELL181MK16S',180, 0.090, 1963.49541,  2180;
+            '187AVG063MGBJ',     180, 0.028, 942.47780,   2900;
+            'UCZ1J181MNS1MS',    180, 0.020, 1656.69925,  3925;
+            'UHW1J181MPD1TD',    180, 0.115, 1256.63706,  2005;
+            '63ZLJ180M10X16',    180, 0.076, 1256.63706,  1785;
+            '860040775009',      180, 0.100, 1570.79633,  2225; 
            };
 
+% En etkili INDUCTANCE'i seç
+loss_weight   = 0.55;
+cost_weight   = 0.30;
+volume_weight = 0.15;
+[best_inductance, best_score] = select_best_inductance(inductances, loss_weight, cost_weight, volume_weight);
+
+% En etkili INDUCTANCE'i yazdır
+fprintf('En Etkili INDUCTANCE: %s\n', best_inductance{1});
+fprintf('Gerilim (V): %.2f V\n', best_inductance{2});
+fprintf('ESR: %.2f\n', best_inductance{3});
+fprintf('Hacim: %.2f\n', best_inductance{4});
+fprintf('Maliyet: %.2f\n', best_inductance{5});
 
 % En etkili INDUCTANCE seçim algoritması
 function [best_inductance, best_score] = select_best_inductance(inductances, loss_weight, cost_weight, volume_weight)
@@ -172,7 +183,7 @@ function [best_inductance, best_score] = select_best_inductance(inductances, los
         esr = inductance{3};
         volume = inductance{4};
         cost = inductance{5};
-        score = loss_weight * esr + cost_weight * cost + volume_weight + volume; 
+        score = esr_weight * esr + cost_weight * cost + volume_weight * volume;
 
         if score < best_score
             best_inductance = inductance;
@@ -180,12 +191,3 @@ function [best_inductance, best_score] = select_best_inductance(inductances, los
         end
     end
 end
-
-
-
-% En etkili INDUCTANCE'i yazdır
-fprintf('En Etkili INDUCTANCE: %s\n', best_inductance{1});
-fprintf('Gerilim (V): %.2f V\n', best_inductance{2});
-fprintf('ESR: %.2f\n', best_inductance{3});
-fprintf('Maliyet: %.2f\n', best_inductance{4});
-fprintf('Hacim: %.2f\n', best_inductance{5});
