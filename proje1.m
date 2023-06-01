@@ -1,8 +1,8 @@
 Po = 250;
 Vinmin = 5;
 Vinmax = 20;
-Vomin = 12;
-Vomax = 15;
+Vomin = 11;
+Vomax = 13;
 n = 0.95;
 fsw = 300000;
 
@@ -43,11 +43,13 @@ Kind = 0.3;
 Lbuck = Vo * (Vinmax - Vo) / (Kind * fsw * Vinmax * Io);
 Lboost = Vinmin ^ 2 * (Vo - Vinmin) / (fsw * Kind * Io * Vo ^ 2);
 
-% Buck ve boost modları için akım çırpıntısı hesaplamaları
+% Buck ve boost modları için en yüksek anahtar akımının hesaplanması
 dImaxbuck = (Vinmin - Vo) * Dbuck / (fsw * Lbuck);
 Iswmaxbuck = dImaxbuck / 2 + Io;
 dImaxboost = Vinmin * Dboost / (fsw * Lboost);
 Iswmaxboost = dImaxboost / 2 + Io / (1 - Dboost);
+
+//TOODO: En yüksek anahtar akımınını hesapla 
 
 % Çıkış gerilimi çırpıntısı
 Voutripple = Vo * 0.005;
@@ -75,7 +77,7 @@ deltaIlboost = Vinmin * Dboost / (fsw * Lboostmin);
 Ilmaxboost = deltaIlboost / 2 + Io / (1 - Dboost);
 Ilminboost = -deltaIlboost / 2 + Io / (1 - Dboost);
 Lbuckmin = Vomin * (Vinmax - Vomin) / (Kind * fsw * Vinmax * Io);
-deltaIlbuck = (Vinmin - Vo) / (fsw * Lbuckmin);
+deltaIlbuck = ((Vinmin - Vo)*Dbuck)/ (fsw * Lbuckmin);
 Ilmaxbuck = deltaIlbuck / 2 + Io;
 Ilminbuck = -deltaIlbuck / 2 + Io;
 
@@ -169,7 +171,7 @@ volume_weight = 0.15;
 
 % En etkili CAPACITOR'i yazdır
 fprintf('En Etkili CAPACITOR: %s\n', best_capacitor{1});
-fprintf('Kapasite (F): %.2f V\n', "180");
+fprintf('Kapasite (F): %.2f F\n', "180");
 fprintf('Pcout: %.2f\n', Pcout);
 fprintf('Hacim: %.2f\n', best_capacitor{4});
 fprintf('Maliyet: %.2f\n', best_capacitor{5});
@@ -197,3 +199,7 @@ function [best_capacitor, best_score] = select_best_capacitor(capacitors, loss_w
         end
     end
 end
+
+
+
+

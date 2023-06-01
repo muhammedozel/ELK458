@@ -43,7 +43,7 @@ Kind = 0.3;
 Lbuck = Vo * (Vinmax - Vo) / (Kind * fsw * Vinmax * Io);
 Lboost = Vinmin ^ 2 * (Vo - Vinmin) / (fsw * Kind * Io * Vo ^ 2);
 
-% Buck ve boost modları için akım çırpıntısı hesaplamaları
+% Buck ve boost modları için en yüksek anahtar akımının hesaplanması
 dImaxbuck = (Vinmin - Vo) * Dbuck / (fsw * Lbuck);
 Iswmaxbuck = dImaxbuck / 2 + Io;
 dImaxboost = Vinmin * Dboost / (fsw * Lboost);
@@ -75,7 +75,7 @@ deltaIlboost = Vinmin * Dboost / (fsw * Lboostmin);
 Ilmaxboost = deltaIlboost / 2 + Io / (1 - Dboost);
 Ilminboost = -deltaIlboost / 2 + Io / (1 - Dboost);
 Lbuckmin = Vomin * (Vinmax - Vomin) / (Kind * fsw * Vinmax * Io);
-deltaIlbuck = (Vinmin - Vo) / (fsw * Lbuckmin);
+deltaIlbuck = ((Vinmin - Vo)*Dbuck)/ (fsw * Lbuckmin);
 Ilmaxbuck = deltaIlbuck / 2 + Io;
 Ilminbuck = -deltaIlbuck / 2 + Io;
 
@@ -139,56 +139,57 @@ Icout = Iomax * sqrt((Vomax / Vinmin) - 1);
 
 % Eklenen CAPACITOR değerleri
 capacitors = {
-            'EEU-FS1J181',       180, 0.045, 0.09, 1256.637061, 2530;
-            'EEUFR1J181B',       180, 0.035, 0.09, 1570.79633,  2325;
-            'EEU-FC1J181SB',     180, 0.150, 0.08, 1840.77695,  2880;
-            '860080775017',      180, 0.095, 0.08, 1570.79633,  1865;
-            'EEU-FC1J181S',      180, 0.150, 0.08, 1840.77695,  3625;
-            'EEU-FS1J181L',      180, 0.050, 0.09, 1005.30965,  2110;
-            'EEU-FR1J181',       180, 0.035, 0.09, 1570.79633,  3070;
-            '63ZLH180MEFC10X16', 180, 0.110, 0.09, 1256.63706,  1365;
-            'EKZN800ELL181MK16S',180, 0.090, 0.09, 1963.49541,  2180;
-            'UPW1J181MPD',       180, 0.147, 0.09, 1570.79633,  2840;
-            'UHE1J181MPD1TD',    180, 0.210, 0.09, 1570.79633,  1960;
-            'EKZE630ELL181MK16S',180, 0.072, 0.09, 1963.49541,  2370;
-            'EKZN800ELL181MK16S',180, 0.090, 0.09, 1963.49541,  2180;
-            '187AVG063MGBJ',     180, 0.028, 0,12, 942.47780,   2900;
-            'UCZ1J181MNS1MS',    180, 0.020, 0,12, 1656.69925,  3925;
-            'UHW1J181MPD1TD',    180, 0.115, 0.09, 1256.63706,  2005;
-            '63ZLJ180M10X16',    180, 0.076, 0.09, 1256.63706,  1785;
-            '860040775009',      180, 0.100, 0.09, 1570.79633,  2225 
-           };
+    'EEU-FS1J181',        0.045, 0.09, 1256.637061, 2530;
+    'EEUFR1J181B',        0.035, 0.09, 1570.79633,  2325;
+    'EEU-FC1J181SB',      0.150, 0.08, 1840.77695,  2880;
+    '860080775017',       0.095, 0.08, 1570.79633,  1865;
+    'EEU-FC1J181S',       0.150, 0.08, 1840.77695,  3625;
+    'EEU-FS1J181L',       0.050, 0.09, 1005.30965,  2110;
+    'EEU-FR1J181',        0.035, 0.09, 1570.79633,  3070;
+    '63ZLH180MEFC10X16',  0.110, 0.09, 1256.63706,  1365;
+    'EKZN800ELL181MK16S', 0.090, 0.09, 1963.49541,  2180;
+    'UPW1J181MPD',        0.147, 0.09, 1570.79633,  2840;
+    'UHE1J181MPD1TD',     0.210, 0.09, 1570.79633,  1960;
+    'EKZE630ELL181MK16S', 0.072, 0.09, 1963.49541,  2370;
+    'EKZN800ELL181MK16S', 0.090, 0.09, 1963.49541,  2180;
+    '187AVG063MGBJ',      0.028, 0.12, 942.47780,   2900;
+    'UCZ1J181MNS1MS',     0.020, 0.12, 1656.69925,  3925;
+    'UHW1J181MPD1TD',     0.115, 0.09, 1256.63706,  2005;
+    '63ZLJ180M10X16',     0.076, 0.09, 1256.63706,  1785;
+    '860040775009',       0.100, 0.09, 1570.79633,  2225 
+};
+
 
 % En etkili CAPACITOR'i seç
 loss_weight   = 0.55;
 cost_weight   = 0.30;
 volume_weight = 0.15;
-[best_capacitor, best_score] = select_best_capacitor(capacitors, loss_weight, cost_weight, volume_weight);
+[best_capacitor, best_score] = select_best_capacitor(capacitors, loss_weight, cost_weight, volume_weight, Icout, fsw, C);
 
 
 % En etkili CAPACITOR'i yazdır
 fprintf('En Etkili CAPACITOR: %s\n', best_capacitor{1});
-fprintf('Gerilim (V): %.2f V\n', best_capacitor{2});
-fprintf('ESR: %.2f\n', best_capacitor{3});
+fprintf('Kapasite (F): %.2f F\n', "180");
+fprintf('Pcout: %.2f\n', Pcout);
 fprintf('Hacim: %.2f\n', best_capacitor{4});
 fprintf('Maliyet: %.2f\n', best_capacitor{5});
 
 % En etkili CAPACITOR seçim algoritması
-function [best_capacitor, best_score] = select_best_capacitor(capacitors, loss_weight, cost_weight, volume_weight)
+function [best_capacitor, best_score] = select_best_capacitor(capacitors, loss_weight, cost_weight, volume_weight, Icout, fsw, C)
     best_capacitor = capacitors(1, :);
     best_score = Inf;
 
     for i = 1:size(capacitors, 1)
         capacitor = capacitors(i, :);
-        esr = capacitor{3};
-        DF = capacitor{4};
-        volume = capacitor{5};
-        cost = capacitor{6};
-
-        score = loss_weight * Pcout + cost_weight * cost + volume_weight * volume;
+        esr = capacitor{2};
+        DF = capacitor{3};
+        volume = capacitor{4};
+        cost = capacitor{5};
         
         ESR1 = DF/(2*fsw*C*3.14);
         Pcout = Icout ^ 2 * ESR1;
+
+        score = loss_weight * Pcout + cost_weight * cost + volume_weight * volume;
 
         if score < best_score
             best_capacitor = capacitor;
@@ -196,3 +197,7 @@ function [best_capacitor, best_score] = select_best_capacitor(capacitors, loss_w
         end
     end
 end
+
+
+
+
