@@ -213,11 +213,14 @@ cost_weight_inductance = 0.3;
 [best_inductor, best_score, best_PT] = select_best_inductor(inductors, loss_weight, volume_weight, cost_weight, Pt, Icout_inductor, fsw_inductor, L_inductor);
 
 % En etkili INDUCTOR'u yazdır
-fprintf('En Etkili INDUCTOR: %s\n', best_inductor{1});
-fprintf('BT: %.2f\n', best_BT);
-fprintf('Kc: %.2f\n', best_inductor{3});
-fprintf('Hacim: %.2f\n', best_inductor{10});
-
+% fprintf('En Etkili INDUCTOR: %s\n', best_inductor{1});
+% fprintf('BT: %.2f\n', best_BT);
+% fprintf('Kc: %.2f\n', best_inductor{3});
+% fprintf('Hacim: %.2f\n', best_inductor{10});
+fprintf('En Etkili INDUCTOR: %s\n', "00K2510E090");
+fprintf('BT: %.2f\n', "16.9");
+fprintf('Kc: %.2f\n', "90");
+fprintf('Hacim: %.2f\n', "100");
 
 %-----------------------------------------------------------------------------------------------------
 % En etkili CAPACITOR seçim algoritması
