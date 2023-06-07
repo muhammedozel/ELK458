@@ -221,7 +221,7 @@ fprintf('Maliyet: %.2f\n', best_capacitor{5});
 % En etkili CAPACITOR seçim algoritması
 Pcapacite=(best_Pcout);
 total = (best_Pcout + Pt);
-function [best_capacitor, best_score] = select_best_capacitor(capacitors, loss_weight_capacitor, cost_weight_capacitor, volume_weight_capacitor, Icout, fsw, C)
+function [best_capacitor, best_score, best_Pcout] = select_best_capacitor(capacitors, loss_weight_capacitor, cost_weight_capacitor, volume_weight_capacitor, Icout, fsw, C)
     best_capacitor = capacitors(1, :);
     best_score = Inf;
     best_Pcout = 0;  % En iyi Pcout değeri için değişken tanımlama
@@ -249,5 +249,4 @@ end
 
 %Mosfet kayıpları
 %iletim kaybı
-Piletim(t)=Rdson*Id^2;
-
+% Piletim(t)=Rdson*Id^2;
