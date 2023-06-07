@@ -177,15 +177,16 @@ mosfets = {
 
 % Eklenen INDUCTOR değerleri
 % inductor_ismi= inductor{1}, BT = inductor{2}, Kc = inductor{3), Geçirgenlik = inductor{4}, Al (nH/T^2) = inductor{5} , Hata Payı=inductor{6}, Wa (mm^'2){7}= inductor{8}, Ac (mm^2)=inductor{8}, Lc (mm)=inductor{9}, Volume=inductor{10},
+
 inductors = {
-    '00K2510E090'		0.1,	16.9,	90,     100,    8,	77.8,	38.5,	48.5,	1870;
-    '00K1808E090'		0.1,	16.9,	90,     69,     8,	51.5,	22.80,	40.1,	914;
-    '00K3007E090'		0.1,	16.9,	90,     92,     8,	121,	60.1,	65.6,	3940;
-    '00K4317E090'		0.1,	16.9,	90,     234,    8,	164,	152,	77.5,	11800;
-    '00X3515E060'		0.1,	16.9,	60,     102,    8,	151,	84,	    69.4,	5830;
-    '00X4317E060'		0.1,	16.9,	60,     163,    8,	164,	152,	77.5,	11800;
-    '00X4020E060'		0.1,	16.9,	60,     150,	8,	276,	183,	98.4,	18000;
-    '00X1808E060'		0.1,	16.9,	60,     48, 	8,	51.5,	22.8,	40.1,	914
+    '00K2510E090', 0.1, 16.9, 90, 100,  8, 77.8,    38.5,   48.5, 1870, 1;
+    '00K1808E090', 0.1, 16.9, 90, 69,   8, 51.5,    22.80,  40.1, 914,  1;
+    '00K3007E090', 0.1, 16.9, 90, 92,   8, 121,     60.1,   65.6, 3940, 1;
+    '00K4317E090', 0.1, 16.9, 90, 234,  8, 164,     152,    77.5, 11800,1;
+    '00X3515E060', 0.1, 16.9, 60, 102,  8, 151,     84,     69.4, 5830, 1;
+    '00X4317E060', 0.1, 16.9, 60, 163,  8, 164,     152,    77.5, 11800,1;
+    '00X4020E060', 0.1, 16.9, 60, 150,  8, 276,     183,    98.4, 18000,1;
+    '00X1808E060', 0.1, 16.9, 60, 48,   8, 51.5,    22.8,   40.1, 914,  1
 };
 
 %-----------------------------------------------------------------------------------------------------
@@ -204,18 +205,20 @@ fprintf('Maliyet: %.2f\n', best_capacitor{5});
 
 
 %-----------------------------------------------------------------------------------------------------
-% % En etkili INDUCTOR'ü seç
-% loss_weight_inductor    = 0.55;
-% cost_weight_inductor    = 0.30;
-% volume_weight_inductor  = 0.15;
-% [best_inductor, best_score, best_Plout] = select_best_inductor(inductors, loss_weight_inductor, cost_weight_inductor, volume_weight_inductor);
+% En etkili INDUCTOR'ü seç
+loss_weight_inductance = 0.4;
+volume_weight_inductance = 0.3;
+cost_weight_inductance = 0.3;
 
-% % En etkili INDUCTOR'u yazdır
-% fprintf('En Etkili INDUCTOR: %s\n', best_inductor{1});
-% fprintf('Kapasite (F): %.2f F\n', "180");
-% fprintf('Pcout : %.2f\n', best_Plout);
-% fprintf('Hacim: %.2f\n', best_inductor{10});
-% fprintf('Maliyet: %.2f\n', best_inductor{X});  % Şuan burası bilinmiyor
+[best_inductor, best_score_inductance, best_PT_inductance] = select_best_inductor(inductors, loss_weight_inductance, volume_weight_inductance, cost_weight_inductance, Pt_inductance, Icout_inductor, fsw_inductor, L_inductor);
+
+
+% En etkili INDUCTOR'u yazdır
+fprintf('En Etkili INDUCTOR: %s\n', best_inductor{1});
+fprintf('BT: %.2f\n', best_BT);
+fprintf('Kc: %.2f\n', best_inductor{3});
+fprintf('Hacim: %.2f\n', best_inductor{10});
+
 
 %-----------------------------------------------------------------------------------------------------
 % En etkili CAPACITOR seçim algoritması
@@ -244,6 +247,26 @@ function [best_capacitor, best_score, best_Pcout] = select_best_capacitor(capaci
         end
     end
 end
+
+---------------------------------------------------------------------------------------------------------
+% En etkili INDUCTOR seçim algoritması
+function [best_inductor, best_score_inductance, best_PT_inductance] = select_best_inductor(inductors, loss_weight_inductance, volume_weight_inductance, cost_weight_inductance, Pt_inductance, Icout_inductor, fsw_inductor, L_inductor)
+    best_inductor = inductors(1, :);
+    best_score = Inf;
+    best_PT_inductance = 0;  
+
+    for i = 1:size(inductors, 1)
+        inductor = inductors(i, :);
+        volume = inductor{10};
+        cost = inductor{11};
+
+        % Assuming the calculation for Pt is already given outside the function
+        score = loss_weight_inductance * Pt_inductance + volume_weight_inductance * volume + cost_weight_inductance * cost;
+
+        if score < best_score
+            best_inductor = inductor;
+            best_score = score;
+            best_PT_inductance = Pt
 
 
 
