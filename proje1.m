@@ -267,7 +267,9 @@ function [best_inductor, best_score_inductance, best_PT_inductance] = select_bes
             best_inductor = inductor;
             best_score = score;
             best_PT_inductance = Pt
-
+        end
+    end
+end
 
 
 %Mosfet kayıpları
