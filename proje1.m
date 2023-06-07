@@ -70,7 +70,7 @@ else
     C = Cboost;
 end
 
-% Buck ve boost modları için minimum endüktans değerlerini hesapla
+% INDUCTOR ICIN: Buck ve boost modları için minimum endüktans değerlerini hesapla
 Lboostmin = Vinmin ^ 2 * (Vomin - Vinmin) / (fsw * Kind * Io * Vo ^ 2);
 deltaIlboost = Vinmin * Dboost / (fsw * Lboostmin);
 Ilmaxboost = deltaIlboost / 2 + Io / (1 - Dboost);
@@ -80,13 +80,13 @@ deltaIlbuck = ((Vinmin - Vo)*Dbuck)/ (fsw * Lbuckmin);
 Ilmaxbuck = deltaIlbuck / 2 + Io;
 Ilminbuck = -deltaIlbuck / 2 + Io;
 
-% Zirve akım değerini hesapla
+% INDUCTOR ICIN: Zirve akım değerini hesapla
 Ipeak = Io + deltaIlbuck / 2;
 
 % Maksimum manyetik akı yoğunluğunu hesapla
 Bmax = 0.25;
 
-% Diğer sabitler
+% INDUCTOR ICIN: Diğer sabitler
 ku = 0.8;
 Ki = 1;
 Kt = 48.2 * 10 ^ 3;
@@ -104,7 +104,7 @@ alfa = 1.25;
 beta = 2.35;
 Kc = 16.9;
 
-% Manyetik bileşenler için hesaplamalar
+% INDUCTOR ICIN: Manyetik bileşenler için hesaplamalar
 dIL = (Vinmax - Vomin) * Dbuck * T / L1;
 L1 = Vomin * (Vinmax - Vomin) / (Kind * fsw * Vinmax * (Po / Vomin));
 I = Po / Vomin + dIL / 2;
@@ -119,7 +119,7 @@ N = sqrt(L1 / Al);
 dB = ((Vinmax - Vomin) * Dbuck * T) / (N * Ac);
 Pfe = Vc * Kc * fsw ^ alfa * (dB / 2) ^ beta;
 
-% Manyetik bileşenler için boyut ve tel özelliklerini hesapla
+% INDUCTOR ICIN: Manyetik bileşenler için boyut ve tel özelliklerini hesapla
 gmax = (lc / muopt) * 10 ^ 3;
 Ap2 = 2.49;
 Jo = Kt * (sqrt(dT)) / (sqrt(ku * (1 + gamma)) * (Ap2 * 10 ^ -8) ^ (1/8)) * 10 ^ -4;
@@ -130,7 +130,7 @@ Rdcwire = 10.75 * 10 ^ -6;
 alpha20 = 0.00393;
 Tmax = 85;
 
-% Tel direnci ve bakır kayıplarını hesapla
+% INDUCTOR ICIN: Tel direnci ve bakır kayıplarını hesapla
 Rdc = N1 * MLT * 10 ^ 2 * Rdcwire * (1 + alpha20 * (Tmax - 20)) * 10 ^ 3;
 Pcu = Rdc * 10 ^ -3 * Iomax ^ 2;
 Pt = Pcu + Pfe;
@@ -139,6 +139,7 @@ Icout = Iomax * sqrt((Vomax / Vinmin) - 1);
 
 
 % Eklenen CAPACITOR değerleri
+% capacitor_ismi= capacitors{1}; esr = capacitors{2}; DF = capacitors{3}; volume = capacitors{4}; cost = capacitors{5};
 capacitors = {
     'EEU-FS1J181',        0.045, 0.09, 1256.637061, 2530;
     'EEUFR1J181B',        0.035, 0.09, 1570.79633,  2325;
@@ -161,6 +162,7 @@ capacitors = {
 };
 
 % Eklenen MOSFET değerleri
+% mosfet_ismi= mosfet{1}; Udd= mosfet{2}; Rds Mohm=mosfet{3}; Crss pf =mosfet{4}; Vplato=mosfet{5}; Vgsth=mosfet{6}; Maliyet=mosfet{7}; tf=mosfet{8}; tr10-9=mosfet{9};Qgsnc=mosfet{10};Qgdnc=mosfet{11};Qgtotal=mosfet{12};Vgs=mosfet{13}; 
 mosfets = {
     'IPD036N04L G',     20.00,	0.0036,	90.00,	1.60,	54.00,	3.00,	2.00,	6.00,	5.40,	14.00,	6.10,	38.00,	0.84208;
     'IRF40R207',        20.00,	0.0051,	89.00,	2.00,	220.00,	5.30,	2.50,	19.00,	35.00,	12.00,	15.00,	68.00,	0.41983;
@@ -174,7 +176,7 @@ mosfets = {
 };
 
 % Eklenen INDUCTOR değerleri
-% inductor ismi{1}, BT({2), Kc{3}, Geçirgenlik{4}, Al (nH/T^2){5}, Hata Payı{6}, Wa (mm^'2){7}, Ac (mm^2){8}, Lc (mm){9}, Vc (mm3){10},
+% inductor_ismi= inductor{1}, BT = inductor{2}, Kc = inductor{3), Geçirgenlik = inductor{4}, Al (nH/T^2) = inductor{5} , Hata Payı=inductor{6}, Wa (mm^'2){7}= inductor{8}, Ac (mm^2)=inductor{8}, Lc (mm)=inductor{9}, Volume=inductor{10},
 inductors = {
     '00K2510E090'		0.1,	16.9,	90,     100,    8,	77.8,	38.5,	48.5,	1870;
     '00K1808E090'		0.1,	16.9,	90,     69,     8,	51.5,	22.80,	40.1,	914;
@@ -188,10 +190,10 @@ inductors = {
 
 
 % En etkili CAPACITOR'i seç
-loss_weight   = 0.55;
-cost_weight   = 0.30;
-volume_weight = 0.15;
-[best_capacitor, best_score, best_Pcout] = select_best_capacitor(capacitors, loss_weight, cost_weight, volume_weight, Icout, fsw, C);
+loss_weight_capacitor   = 0.55;
+cost_weight_capacitor   = 0.30;
+volume_weight_capacitor = 0.15;
+[best_capacitor, best_score, best_Pcout] = select_best_capacitor(capacitors, loss_weight_capacitor, cost_weight_capacitor, volume_weight_capacitor, Icout, fsw, C);
 
 % En etkili CAPACITOR'i yazdır
 fprintf('En Etkili CAPACITOR: %s\n', best_capacitor{1});
@@ -199,10 +201,24 @@ fprintf('Kapasite (F): %.2f F\n', "180");
 fprintf('Pcout : %.2f\n', best_Pcout);
 fprintf('Hacim: %.2f\n', best_capacitor{4});
 fprintf('Maliyet: %.2f\n', best_capacitor{5});
+
+% En etkili INDUCTOR'ü seç
+loss_weight_inductor    = 0.55;
+cost_weight_inductor    = 0.30;
+volume_weight_inductor  = 0.15;
+[best_inductor, best_score, best_Plout] = select_best_inductor(inductors, loss_weight_inductor, cost_weight_inductor, volume_weight_inductor);
+
+% En etkili INDUCTOR'u yazdır
+fprintf('En Etkili INDUCTOR: %s\n', best_inductor{1});
+fprintf('Kapasite (F): %.2f F\n', "180");
+fprintf('Pcout : %.2f\n', best_Plout);
+fprintf('Hacim: %.2f\n', best_inductor{10});
+fprintf('Maliyet: %.2f\n', best_inductor{X});  % Şuan burası bilinmiyor
+
 % En etkili CAPACITOR seçim algoritması
 Pcapacite=(best_Pcout);
 total = (best_Pcout + Pt);
-function [best_capacitor, best_score, best_Pcout] = select_best_capacitor(capacitors, loss_weight, cost_weight, volume_weight, Icout, fsw, C)
+function [best_capacitor, best_score] = select_best_capacitor(capacitors, loss_weight_capacitor, cost_weight_capacitor, volume_weight_capacitor, Icout, fsw, C)
     best_capacitor = capacitors(1, :);
     best_score = Inf;
     best_Pcout = 0;  % En iyi Pcout değeri için değişken tanımlama
@@ -214,10 +230,9 @@ function [best_capacitor, best_score, best_Pcout] = select_best_capacitor(capaci
         volume = capacitor{4};
         cost = capacitor{5};
         
-        ESR1 = DF/(2*fsw*C*3.14);
-        Pcout = Icout ^ 2 * ESR1;
+        Pcout = Icout ^ 2 * (capacitor{3}/(2*fsw*C*3.14));
 
-        score = loss_weight * Pcout + cost_weight * cost + volume_weight * volume;
+        score = loss_weight_capacitor * Pcout + cost_weight_capacitor * cost + volume_weight_capacitor * volume;
 
         if score < best_score
             best_capacitor = capacitor;
@@ -227,4 +242,9 @@ function [best_capacitor, best_score, best_Pcout] = select_best_capacitor(capaci
     end
 end
 
+
+
+%Mosfet kayıpları
+%iletim kaybı
+Piletim(t)=Rdson*Id^2;
 
