@@ -266,7 +266,7 @@ function [best_inductor, best_score_inductance, best_PT_inductance] = select_bes
         if score < best_score
             best_inductor = inductor;
             best_score = score;
-            best_PT_inductance = Pt
+            best_PT_inductance = Pt_inductance;
         end
     end
 end
