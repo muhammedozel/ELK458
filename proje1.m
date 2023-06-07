@@ -210,8 +210,7 @@ loss_weight_inductance = 0.4;
 volume_weight_inductance = 0.3;
 cost_weight_inductance = 0.3;
 
-[best_inductor, best_score_inductance, best_PT_inductance] = select_best_inductor(inductors, loss_weight_inductance, volume_weight_inductance, cost_weight_inductance, Pt_inductance, Icout_inductor, fsw_inductor, L_inductor);
-
+[best_inductor, best_score, best_PT] = select_best_inductor(inductors, loss_weight, volume_weight, cost_weight, Pt, Icout_inductor, fsw_inductor, L_inductor);
 
 % En etkili INDUCTOR'u yazdır
 fprintf('En Etkili INDUCTOR: %s\n', best_inductor{1});
@@ -250,10 +249,10 @@ end
 
 %---------------------------------------------------------------------------------------------------------
 % En etkili INDUCTOR seçim algoritması
-function [best_inductor, best_score_inductance, best_PT_inductance] = select_best_inductor(inductors, loss_weight_inductance, volume_weight_inductance, cost_weight_inductance, Pt_inductance, Icout_inductor, fsw_inductor, L_inductor)
+function [best_inductor, best_score, best_PT] = select_best_inductor(inductors, loss_weight, volume_weight, cost_weight, Pt, Icout_inductor, fsw_inductor, L_inductor)
     best_inductor = inductors(1, :);
     best_score = Inf;
-    best_PT_inductance = 0;  
+    best_PT = 0;  
 
     for i = 1:size(inductors, 1)
         inductor = inductors(i, :);
@@ -261,12 +260,12 @@ function [best_inductor, best_score_inductance, best_PT_inductance] = select_bes
         cost = inductor{11};
 
         % Assuming the calculation for Pt is already given outside the function
-        score = loss_weight_inductance * Pt_inductance + volume_weight_inductance * volume + cost_weight_inductance * cost;
+        score = loss_weight * Pt + volume_weight * volume + cost_weight * cost;
 
         if score < best_score
             best_inductor = inductor;
             best_score = score;
-            best_PT_inductance = Pt_inductance;
+            best_PT = Pt;
         end
     end
 end
