@@ -172,7 +172,7 @@ volume_weight = 0.15;
 % En etkili CAPACITOR'i yazdır
 fprintf('En Etkili CAPACITOR: %s\n', best_capacitor{1});
 fprintf('Kapasite (F): %.2f F\n', "180");
-fprintf('Pcout: %.2f\n', Pcout);
+fprintf('Pcout: %.2f\n', "Pcout");
 fprintf('Hacim: %.2f\n', best_capacitor{4});
 fprintf('Maliyet: %.2f\n', best_capacitor{5});
 
@@ -199,15 +199,6 @@ function [best_capacitor, best_score] = select_best_capacitor(capacitors, loss_w
         end
     end
 end
-
-%Mosfet kayıpları
-%iletim kaybı
-Piletim(t)=Rdson*Id^2;
-
-%anahtarlama kaybı
-
-Ig=tf/Qgd;
-Psw=Vds*Id*fsw*(Qgs*Qgd/Ig);
 
 
 

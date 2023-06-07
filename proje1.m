@@ -14,7 +14,6 @@ Vo = round(Vomin + (Vomax - Vomin) * rand(1, 1));
 Io = Po / Vo;
 R = Po / Io;
 T = 1 / fsw;
-%% 
 
 % Giriş ve çıkış gerilimlerine göre buck ve boost görev döngülerini belirle
 Dbuck = Vo / (Vinmax * n);
@@ -192,20 +191,21 @@ inductors = {
 loss_weight   = 0.55;
 cost_weight   = 0.30;
 volume_weight = 0.15;
-[best_capacitor, best_score] = select_best_capacitor(capacitors, loss_weight, cost_weight, volume_weight, Icout, fsw, C);
-
+[best_capacitor, best_score, best_Pcout] = select_best_capacitor(capacitors, loss_weight, cost_weight, volume_weight, Icout, fsw, C);
 
 % En etkili CAPACITOR'i yazdır
 fprintf('En Etkili CAPACITOR: %s\n', best_capacitor{1});
 fprintf('Kapasite (F): %.2f F\n', "180");
-fprintf('Pcout: %.2f\n', Pcout);
+fprintf('Pcout : %.2f\n', best_Pcout);
 fprintf('Hacim: %.2f\n', best_capacitor{4});
 fprintf('Maliyet: %.2f\n', best_capacitor{5});
-
 % En etkili CAPACITOR seçim algoritması
-function [best_capacitor, best_score] = select_best_capacitor(capacitors, loss_weight, cost_weight, volume_weight, Icout, fsw, C)
+Pcapacite=(best_Pcout);
+total = (best_Pcout + Pt);
+function [best_capacitor, best_score, best_Pcout] = select_best_capacitor(capacitors, loss_weight, cost_weight, volume_weight, Icout, fsw, C)
     best_capacitor = capacitors(1, :);
     best_score = Inf;
+    best_Pcout = 0;  % En iyi Pcout değeri için değişken tanımlama
 
     for i = 1:size(capacitors, 1)
         capacitor = capacitors(i, :);
@@ -222,19 +222,9 @@ function [best_capacitor, best_score] = select_best_capacitor(capacitors, loss_w
         if score < best_score
             best_capacitor = capacitor;
             best_score = score;
+            best_Pcout = Pcout;  % En iyi kapasitörün Pcout değerini saklama
         end
     end
 end
-
-%Mosfet kayıpları
-%iletim kaybı
-Piletim(t)=Rdson*Id^2;
-
-%anahtarlama kaybı
-
-Ig=tf/Qgd;
-Psw=Vds*Id*fsw*(Qgs*Qgd/Ig);
-Pdrr=1/4*Qrr*Vds*fsw;
-Pg=Qg*Vgs*fsw
 
 
