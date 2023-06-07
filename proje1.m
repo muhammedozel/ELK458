@@ -14,6 +14,7 @@ Vo = round(Vomin + (Vomax - Vomin) * rand(1, 1));
 Io = Po / Vo;
 R = Po / Io;
 T = 1 / fsw;
+%% 
 
 % Giriş ve çıkış gerilimlerine göre buck ve boost görev döngülerini belirle
 Dbuck = Vo / (Vinmax * n);
@@ -49,7 +50,6 @@ Iswmaxbuck = dImaxbuck / 2 + Io;
 dImaxboost = Vinmin * Dboost / (fsw * Lboost);
 Iswmaxboost = dImaxboost / 2 + Io / (1 - Dboost);
 
-//TOODO: En yüksek anahtar akımınını hesapla 
 
 % Çıkış gerilimi çırpıntısı
 Voutripple = Vo * 0.005;
@@ -200,6 +200,15 @@ function [best_capacitor, best_score] = select_best_capacitor(capacitors, loss_w
     end
 end
 
+%Mosfet kayıpları
+%iletim kaybı
+Piletim(t)=Rdson*Id^2;
 
+%anahtarlama kaybı
+
+Ig=tf/Qgd;
+Psw=Vds*Id*fsw*(Qgs*Qgd/Ig);
+Pdrr=1/4*Qrr*Vds*fsw;
+Pg=Qg*Vgs*fsw
 
 
