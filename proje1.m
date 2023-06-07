@@ -248,7 +248,7 @@ function [best_capacitor, best_score, best_Pcout] = select_best_capacitor(capaci
     end
 end
 
----------------------------------------------------------------------------------------------------------
+%---------------------------------------------------------------------------------------------------------
 % En etkili INDUCTOR seçim algoritması
 function [best_inductor, best_score_inductance, best_PT_inductance] = select_best_inductor(inductors, loss_weight_inductance, volume_weight_inductance, cost_weight_inductance, Pt_inductance, Icout_inductor, fsw_inductor, L_inductor)
     best_inductor = inductors(1, :);
