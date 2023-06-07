@@ -18,3 +18,7 @@ Pdrr=1/4*Qrr*Vds*fsw;
 Pg=Qg*Vgs*fsw
 ESR1 = DF/(2*fsw*C*3.14);
         Pcout = Icout ^ 2 * ESR1;
+
+        %Mosfet kayıpları
+%iletim kaybı
+Piletim(t)=Rdson*Id^2;
