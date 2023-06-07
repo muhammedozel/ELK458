@@ -188,7 +188,7 @@ inductors = {
     '00X1808E060'		0.1,	16.9,	60,     48, 	8,	51.5,	22.8,	40.1,	914
 };
 
-
+%-----------------------------------------------------------------------------------------------------
 % En etkili CAPACITOR'i seç
 loss_weight_capacitor   = 0.55;
 cost_weight_capacitor   = 0.30;
@@ -202,19 +202,22 @@ fprintf('Pcout : %.2f\n', best_Pcout);
 fprintf('Hacim: %.2f\n', best_capacitor{4});
 fprintf('Maliyet: %.2f\n', best_capacitor{5});
 
-% En etkili INDUCTOR'ü seç
-loss_weight_inductor    = 0.55;
-cost_weight_inductor    = 0.30;
-volume_weight_inductor  = 0.15;
-[best_inductor, best_score, best_Plout] = select_best_inductor(inductors, loss_weight_inductor, cost_weight_inductor, volume_weight_inductor);
 
-% En etkili INDUCTOR'u yazdır
-fprintf('En Etkili INDUCTOR: %s\n', best_inductor{1});
-fprintf('Kapasite (F): %.2f F\n', "180");
-fprintf('Pcout : %.2f\n', best_Plout);
-fprintf('Hacim: %.2f\n', best_inductor{10});
-fprintf('Maliyet: %.2f\n', best_inductor{X});  % Şuan burası bilinmiyor
+%-----------------------------------------------------------------------------------------------------
+% % En etkili INDUCTOR'ü seç
+% loss_weight_inductor    = 0.55;
+% cost_weight_inductor    = 0.30;
+% volume_weight_inductor  = 0.15;
+% [best_inductor, best_score, best_Plout] = select_best_inductor(inductors, loss_weight_inductor, cost_weight_inductor, volume_weight_inductor);
 
+% % En etkili INDUCTOR'u yazdır
+% fprintf('En Etkili INDUCTOR: %s\n', best_inductor{1});
+% fprintf('Kapasite (F): %.2f F\n', "180");
+% fprintf('Pcout : %.2f\n', best_Plout);
+% fprintf('Hacim: %.2f\n', best_inductor{10});
+% fprintf('Maliyet: %.2f\n', best_inductor{X});  % Şuan burası bilinmiyor
+
+%-----------------------------------------------------------------------------------------------------
 % En etkili CAPACITOR seçim algoritması
 Pcapacite=(best_Pcout);
 total = (best_Pcout + Pt);
